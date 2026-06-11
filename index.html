@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sumayyaah Bint Yahya — Sales & Marketing Professional</title>
+  <meta name="description" content="Sales & Marketing professional specialising in product-led marketing. Portfolio of brand strategy, growth campaigns, and marketing systems.">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* DESIGN TOKENS (WCAG 2.1 AA Compliant) */
+    :root {
+      --bg: #09090E;
+      --surface: #111118;
+      --surface2: #1C1C26;
+      --accent: #D4884A;
+      --violet: #A78BFA;
+      --text: #E8E2D9;
+      --muted: #9A9AAC;
+      --border: #2A2A38;
+      
+      --font-d: 'Playfair Display', Georgia, serif;
+      --font-b: 'Inter', system-ui, sans-serif;
+      --font-m: 'Space Grotesk', monospace;
+    }
+
+    [data-theme="light"] {
+      --bg: #F5F2ED;
+      --surface: #EDEAE3;
+      --surface2: #E3DFD6;
+      --text: #1A1A22;
+      --accent: #B5621A;
+      --violet: #6D28D9;
+      --muted: #5A5A6A;
+      --border: #D0CAC0;
+    }
+
+    /* GLOBAL STYLES */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-b);
+      font-size: 16px;
+      line-height: 1.7;
+      transition: background-color 0.3s ease, color 0.3s ease;
+      cursor: none; /* Custom cursor */
+      overflow-x: hidden;
+    }
+
+    @media (max-width: 1024px) { body { cursor: auto; } }
+
+    h1, h2, h3, h4 { font-family: var(--font-d); font-weight: 600; line-height: 1.2; }
+    a { color: inherit; text-decoration: none; transition: color 0.2s; }
+    a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    /* CUSTOM CURSOR */
+    .custom-cursor {
+      position: fixed; top: 0; left: 0;
+      width: 8px; height: 8px;
+      background-color: var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s, background-color 0.2s, border 0.2s;
+    }
+    .custom-cursor.hover {
+      width: 28px; height: 28px;
+      background-color: transparent;
+      border: 2px solid var(--accent);
+    }
+    @media (max-width: 1024px) { .custom-cursor { display: none; } }
+
+    /* LAYOUT & UTILITIES */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 5%; }
+    .section { padding: 96px 0; border-bottom: 1px solid var(--border); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px; }
+    @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+    
+    .eyebrow { font-family: var(--font-m); font-size: 12px; letter-spacing: 0.15em; color: var(--accent); text-transform: uppercase; margin-bottom: 12px; display: block; }
+    .section-title { font-size: 2.5rem; margin-bottom: 16px; }
+    .section-sub { color: var(--muted); font-size: 16px; max-width: 600px; margin-bottom: 48px; }
+    
+    .tag { display: inline-block; font-family: var(--font-m); font-size: 12px; padding: 4px 12px; border-radius: 999px; letter-spacing: 0.05em; }
+    .tag-accent { background: rgba(212,136,74,0.1); color: var(--accent); border: 1px solid var(--accent); }
+    .tag-violet { background: rgba(167,139,250,0.1); color: var(--violet); border: 1px solid var(--violet); }
+
+    /* BUTTONS */
+    .btn { display: inline-flex; align-items: center; justify-content: center; font-family: var(--font-m); font-size: 13px; letter-spacing: 0.08em; padding: 14px 28px; border-radius: 8px; cursor: pointer; transition: all 0.2s; min-height: 44px; min-width: 44px; text-align: center; border: none; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-2px); }
+    [data-theme="light"] .btn-primary { color: #fff; }
+    .btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* NAVIGATION */
+    header { position: fixed; top: 0; width: 100%; z-index: 1000; padding: 24px 0; transition: all 0.3s ease; }
+    header.scrolled { background: rgba(var(--bg-rgb), 0.92); backdrop-filter: blur(16px); padding: 16px 0; border-bottom: 1px solid var(--border); }
+    .nav-container { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; padding: 0 5%; }
+    .logo { font-family: var(--font-d); font-size: 24px; font-style: italic; font-weight: 700; color: var(--accent); min-height: 44px; display: flex; align-items: center; }
+    .logo span { font-size: 28px; margin-right: 2px; }
+    .nav-links { display: flex; gap: 32px; align-items: center; }
+    .nav-links a { font-family: var(--font-m); font-size: 13px; letter-spacing: 0.08em; color: var(--muted); min-height: 44px; display: flex; align-items: center; }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+    .theme-toggle { background: transparent; border: 1px solid var(--border); color: var(--text); border-radius: 999px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; transition: border 0.2s; }
+    .theme-toggle:hover { border-color: var(--accent); }
+    
+    .mobile-menu-btn { display: none; background: transparent; border: none; color: var(--text); font-size: 24px; cursor: pointer; min-height: 44px; min-width: 44px; }
+    @media (max-width: 768px) {
+      .nav-links { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: var(--bg); flex-direction: column; justify-content: center; align-items: center; gap: 24px; }
+      .nav-links.open { display: flex; }
+      .mobile-menu-btn { display: block; z-index: 1001; }
+      .theme-toggle { position: absolute; top: 24px; left: 24px; }
+    }
+
+    /* HERO SECTION */
+    .hero { min-height: 100vh; display: flex; align-items: center; position: relative; padding-top: 80px; }
+    .hero-glow { position: absolute; top: -10%; left: 50%; transform: translateX(-50%); width: 800px; height: 600px; background: radial-gradient(ellipse at 50% 50%, rgba(212,136,74,0.1) 0%, transparent 65%); pointer-events: none; z-index: -1; }
+    .hero h1 { font-size: clamp(2.5rem, 5vw, 4rem); margin-bottom: 12px; }
+    .hero h1 em { color: var(--accent); font-style: italic; }
+    .hero .sub { font-size: 18px; color: var(--muted); margin-bottom: 40px; }
+    .hero .cta-row { display: flex; gap: 16px; flex-wrap: wrap; }
+
+    /* CARDS */
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 32px; transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s; }
+    .project-card { padding: 0; overflow: hidden; display: flex; flex-direction: column; cursor: pointer; }
+    .project-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(212,136,74,0.1); border-color: rgba(212,136,74,0.5); }
+    .project-thumb { height: 220px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #1a0f08, #1a1020); }
+    .project-thumb .watermark { font-family: var(--font-d); font-size: 2rem; color: rgba(255,255,255,0.1); letter-spacing: 0.1em; }
+    .project-body { padding: 24px; flex-grow: 1; display: flex; flex-direction: column; }
+    .project-body h3 { font-size: 1.25rem; margin: 12px 0; }
+    .project-body p { color: var(--muted); font-size: 14px; margin-bottom: 24px; flex-grow: 1; }
+    .project-link { font-family: var(--font-m); font-size: 12px; color: var(--accent); font-weight: 500; letter-spacing: 0.05em; display: inline-block; margin-top: auto; }
+
+    /* ABOUT STATS */
+    .stat-card { border-left: 4px solid var(--accent); }
+    .stat-card .num { font-family: var(--font-d); font-size: 3rem; color: var(--accent); line-height: 1; margin-bottom: 8px; }
+    .stat-card .lbl { font-family: var(--font-m); font-size: 12px; color: var(--muted); letter-spacing: 0.1em; }
+
+    /* SKILLS CHIPS */
+    .skills-grid { display: flex; flex-wrap: wrap; gap: 12px; }
+    .skill-chip { display: flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--border); padding: 12px 20px; border-radius: 8px; font-family: var(--font-m); font-size: 13px; }
+    
+    /* CASE STUDY */
+    .cs-header { background: var(--surface2); padding: 64px 0; border-bottom: 1px solid var(--border); }
+    .cs-content { max-width: 800px; margin: 0 auto; padding: 64px 5%; }
+    .cs-content h4 { font-size: 1.5rem; margin: 40px 0 16px; color: var(--accent); }
+    .cs-content ul { padding-left: 24px; margin-bottom: 24px; }
+    .cs-content li { margin-bottom: 12px; }
+    
+    /* FOOTER */
+    footer { background: var(--surface); border-top: 1px solid var(--border); padding: 64px 0 32px; }
+    .footer-grid { display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 48px; margin-bottom: 48px; }
+    @media (max-width: 768px) { .footer-grid { grid-template-columns: 1fr; text-align: center; } }
+    .footer-tagline { color: var(--muted); font-size: 14px; margin-top: 16px; }
+    .footer-bottom { text-align: center; font-family: var(--font-m); font-size: 12px; color: var(--muted); border-top: 1px solid var(--border); padding-top: 32px; }
+
+    /* FORMS */
+    .form-group { margin-bottom: 24px; }
+    .form-label { display: block; font-family: var(--font-m); font-size: 12px; margin-bottom: 8px; color: var(--muted); }
+    .form-control { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); font-family: var(--font-b); font-size: 16px; padding: 14px; border-radius
