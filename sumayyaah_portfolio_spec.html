@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Portfolio Build Spec — Sumayyaah Bint Yahya</title>
+<style>
+  :root {
+    --bg: #09090E;
+    --surface: #111118;
+    --surface2: #16161F;
+    --accent: #C4773A;
+    --violet: #8B5CF6;
+    --text: #E8E2D9;
+    --muted: #7A7A8C;
+    --border: rgba(196,119,58,0.18);
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+    --font-mono: 'Space Grotesk', monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font-body); font-size: 15px; line-height: 1.7; }
+  h1,h2,h3,h4 { font-family: var(--font-display); }
+
+  /* ── SPEC DOC CHROME ─────────────────────────────────── */
+  .spec-header {
+    background: linear-gradient(135deg, #0f0f1a 0%, #1a0f0f 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 48px 64px;
+  }
+  .spec-header h1 { font-size: 2.8rem; color: var(--accent); margin-bottom: 8px; }
+  .spec-header p { color: var(--muted); font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.08em; }
+  .spec-header .badges { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; }
+  .badge { background: var(--surface2); border: 1px solid var(--border); color: var(--accent); font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; padding: 4px 12px; border-radius: 999px; }
+  .badge.violet { color: var(--violet); border-color: rgba(139,92,246,0.3); }
+
+  .spec-nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(9,9,14,0.95); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 64px;
+    display: flex; gap: 0; overflow-x: auto;
+  }
+  .spec-nav a {
+    color: var(--muted); text-decoration: none; font-family: var(--font-mono);
+    font-size: 12px; letter-spacing: 0.08em; padding: 16px 20px;
+    border-bottom: 2px solid transparent; white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .spec-nav a:hover { color: var(--text); border-bottom-color: var(--accent); }
+
+  .section {
+    padding: 64px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .section-label {
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.15em;
+    color: var(--accent); text-transform: uppercase; margin-bottom: 8px;
+  }
+  .section-title {
+    font-family: var(--font-display); font-size: 2rem;
+    color: var(--text); margin-bottom: 8px;
+  }
+  .section-sub { color: var(--muted); max-width: 640px; margin-bottom: 40px; font-size: 14px; }
+
+  /* ── DESIGN TOKENS ───────────────────────────────────── */
+  .token-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; }
+  .token-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden;
+  }
+  .token-swatch { height: 64px; }
+  .token-info { padding: 12px 16px; }
+  .token-name { font-family: var(--font-mono); font-size: 11px; color: var(--muted); }
+  .token-value { font-family: var(--font-mono); font-size: 13px; color: var(--text); margin-top: 2px; }
+  .token-role { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  /* ── WIREFRAME BLOCKS ────────────────────────────────── */
+  .page-spec {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; margin-bottom: 32px; overflow: hidden;
+  }
+  .page-spec-header {
+    background: var(--surface2); padding: 20px 28px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+  }
+  .page-spec-header h3 { font-family: var(--font-mono); font-size: 14px; color: var(--text); letter-spacing: 0.05em; }
+  .route-tag {
+    background: rgba(139,92,246,0.12); border: 1px solid rgba(139,92,246,0.3);
+    color: var(--violet); font-family: var(--font-mono); font-size: 11px;
+    padding: 4px 12px; border-radius: 6px;
+  }
+  .page-spec-body { padding: 28px; }
+
+  .wireframe {
+    background: #0D0D16; border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px; padding: 24px; margin: 20px 0;
+    font-family: var(--font-mono); font-size: 12px; color: #5A5A72;
+    white-space: pre; overflow-x: auto; line-height: 1.5;
+  }
+  .wireframe .wf-accent { color: var(--accent); }
+  .wireframe .wf-violet { color: var(--violet); }
+  .wireframe .wf-text { color: #8A8AA0; }
+
+  .spec-block {
+    background: rgba(196,119,58,0.05); border-left: 3px solid var(--accent);
+    padding: 16px 20px; border-radius: 0 8px 8px 0; margin: 16px 0;
+  }
+  .spec-block h4 { font-family: var(--font-mono); font-size: 12px; color: var(--accent); letter-spacing: 0.1em; margin-bottom: 8px; }
+  .spec-block p, .spec-block li { font-size: 13px; color: var(--text); line-height: 1.8; }
+  .spec-block ul { padding-left: 20px; }
+
+  .violet-block {
+    background: rgba(139,92,246,0.05); border-left: 3px solid var(--violet);
+    padding: 16px 20px; border-radius: 0 8px 8px 0; margin: 16px 0;
+  }
+  .violet-block h4 { font-family: var(--font-mono); font-size: 12px; color: var(--violet); letter-spacing: 0.1em; margin-bottom: 8px; }
+  .violet-block p, .violet-block li { font-size: 13px; color: var(--text); line-height: 1.8; }
+  .violet-block ul { padding-left: 20px; }
+
+  .component-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
+  @media (max-width: 768px) { .component-row { grid-template-columns: 1fr; } }
+
+  /* ── MOCK COMPONENTS ─────────────────────────────────── */
+  .mock-nav {
+    background: rgba(9,9,14,0.9); backdrop-filter: blur(12px);
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 16px 28px; display: flex; align-items: center;
+    justify-content: space-between;
+  }
+  .mock-logo { font-family: var(--font-display); font-size: 20px; color: var(--accent); letter-spacing: 0.05em; }
+  .mock-links { display: flex; gap: 28px; }
+  .mock-links span { font-family: var(--font-mono); font-size: 12px; color: var(--muted); letter-spacing: 0.08em; }
+  .mock-links span.active { color: var(--text); }
+  .mock-cta {
+    background: var(--accent); color: #fff; font-family: var(--font-mono);
+    font-size: 11px; letter-spacing: 0.08em; padding: 8px 16px;
+    border-radius: 6px; border: none; cursor: pointer;
+  }
+
+  .mock-hero {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 60px 48px; text-align: center; margin: 20px 0;
+    position: relative; overflow: hidden;
+  }
+  .mock-hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(196,119,58,0.08) 0%, transparent 70%);
+  }
+  .mock-hero .eyebrow {
+    font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.2em;
+    color: var(--accent); text-transform: uppercase; margin-bottom: 20px;
+  }
+  .mock-hero h1 { font-size: 3.2rem; line-height: 1.1; margin-bottom: 8px; }
+  .mock-hero h1 em { font-style: italic; color: var(--accent); }
+  .mock-hero .sub { color: var(--muted); font-size: 14px; margin: 16px 0 32px; }
+  .mock-hero .cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn-primary {
+    background: var(--accent); color: #fff; font-family: var(--font-mono);
+    font-size: 12px; letter-spacing: 0.08em; padding: 12px 28px;
+    border-radius: 8px; border: none; cursor: pointer;
+  }
+  .btn-ghost {
+    background: transparent; color: var(--text); font-family: var(--font-mono);
+    font-size: 12px; letter-spacing: 0.08em; padding: 12px 28px;
+    border-radius: 8px; border: 1px solid var(--border); cursor: pointer;
+  }
+
+  .mock-project-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; overflow: hidden;
+  }
+  .mock-project-thumb {
+    height: 160px;
+    background: linear-gradient(135deg, #1a1a28 0%, #1a1020 100%);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .mock-project-thumb .brand-label {
+    font-family: var(--font-display); font-size: 1.4rem; color: rgba(196,119,58,0.4);
+    letter-spacing: 0.1em;
+  }
+  .mock-project-body { padding: 20px; }
+  .tag {
+    display: inline-block; font-family: var(--font-mono); font-size: 10px;
+    letter-spacing: 0.1em; padding: 3px 10px; border-radius: 999px; margin-bottom: 10px;
+  }
+  .tag-accent { background: rgba(196,119,58,0.12); color: var(--accent); border: 1px solid rgba(196,119,58,0.25); }
+  .tag-violet { background: rgba(139,92,246,0.12); color: var(--violet); border: 1px solid rgba(139,92,246,0.25); }
+  .mock-project-body h4 { font-family: var(--font-display); font-size: 1.1rem; margin-bottom: 6px; }
+  .mock-project-body p { font-size: 12px; color: var(--muted); margin-bottom: 16px; }
+  .mock-project-body .case-link { font-family: var(--font-mono); font-size: 11px; color: var(--accent); text-decoration: none; letter-spacing: 0.08em; }
+
+  .mock-skills { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin: 20px 0; }
+  .skill-chip {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px; text-align: center;
+  }
+  .skill-chip .icon { font-size: 18px; margin-bottom: 6px; }
+  .skill-chip .label { font-family: var(--font-mono); font-size: 10px; color: var(--muted); letter-spacing: 0.08em; }
+
+  .mock-testimonial {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 24px;
+  }
+  .mock-testimonial .quote { font-family: var(--font-display); font-size: 1rem; font-style: italic; color: var(--text); margin-bottom: 16px; line-height: 1.6; }
+  .mock-testimonial .quote::before { content: '"'; color: var(--accent); font-size: 1.4rem; margin-right: 4px; }
+  .mock-testimonial .author { font-family: var(--font-mono); font-size: 11px; color: var(--muted); letter-spacing: 0.08em; }
+
+  .mock-case-study { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+  .mock-cs-hero { background: linear-gradient(135deg, #1a1020 0%, #0f1a18 100%); padding: 40px; }
+  .mock-cs-hero .back { font-family: var(--font-mono); font-size: 11px; color: var(--muted); margin-bottom: 20px; }
+  .mock-cs-hero h2 { font-size: 2rem; margin-bottom: 12px; }
+  .mock-cs-body { padding: 32px; }
+  .cs-section { margin-bottom: 28px; padding-bottom: 28px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .cs-section:last-child { border-bottom: none; }
+  .cs-section .label { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.15em; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; }
+  .cs-section h4 { font-family: var(--font-display); font-size: 1.1rem; margin-bottom: 8px; }
+  .cs-section p { font-size: 13px; color: var(--muted); }
+  .metric-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 12px 0; }
+  .metric-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 16px; text-align: center; }
+  .metric-card .num { font-family: var(--font-display); font-size: 1.8rem; color: var(--accent); }
+  .metric-card .lbl { font-family: var(--font-mono); font-size: 10px; color: var(--muted); margin-top: 4px; letter-spacing: 0.1em; }
+
+  .mock-contact { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .contact-info { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px; }
+  .contact-info .item { margin-bottom: 20px; }
+  .contact-info .item .lbl { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.15em; color: var(--accent); text-transform: uppercase; margin-bottom: 6px; }
+  .contact-info .item a { color: var(--text); text-decoration: none; font-size: 14px; }
+  .contact-form { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px; }
+  .form-field { margin-bottom: 16px; }
+  .form-field label { display: block; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; }
+  .form-field input, .form-field select, .form-field textarea {
+    width: 100%; background: var(--bg); border: 1px solid var(--border);
+    color: var(--text); font-family: var(--font-body); font-size: 13px;
+    padding: 10px 14px; border-radius: 8px; outline: none;
+  }
+  .form-field textarea { height: 100px; resize: none; }
+
+  .mock-footer {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 32px 40px;
+    display: grid; grid-template-columns: 1fr auto 1fr;
+    align-items: center; gap: 24px; margin-top: 20px;
+  }
+  .footer-brand .logo { font-family: var(--font-display); font-size: 1.4rem; color: var(--accent); }
+  .footer-brand .tagline { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .footer-links { display: flex; gap: 24px; justify-content: center; }
+  .footer-links span { font-family: var(--font-mono); font-size: 11px; color: var(--muted); letter-spacing: 0.08em; }
+  .footer-right { text-align: right; }
+  .footer-right .social { font-family: var(--font-mono); font-size: 11px; color: var(--muted); }
+
+  .instruction-box {
+    background: rgba(9,9,14,0.8); border: 1px dashed rgba(196,119,58,0.4);
+    border-radius: 10px; padding: 20px 24px; margin: 20px 0;
+  }
+  .instruction-box h4 { font-family: var(--font-mono); font-size: 12px; color: var(--accent); letter-spacing: 0.1em; margin-bottom: 10px; }
+  .instruction-box ul { padding-left: 20px; }
+  .instruction-box li { font-size: 13px; color: var(--text); line-height: 1.9; }
+  .instruction-box code { background: rgba(196,119,58,0.1); color: var(--accent); font-family: var(--font-mono); font-size: 12px; padding: 2px 6px; border-radius: 4px; }
+
+  .anim-spec {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 20px 0;
+  }
+  .anim-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 20px;
+  }
+  .anim-card h4 { font-family: var(--font-mono); font-size: 12px; color: var(--violet); margin-bottom: 8px; }
+  .anim-card p { font-size: 12px; color: var(--muted); line-height: 1.7; }
+
+  table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+  th { background: var(--surface2); font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; color: var(--muted); text-align: left; padding: 12px 16px; border: 1px solid var(--border); }
+  td { font-size: 13px; color: var(--text); padding: 12px 16px; border: 1px solid rgba(255,255,255,0.04); vertical-align: top; }
+  tr:nth-child(even) td { background: rgba(255,255,255,0.015); }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  @media (max-width: 900px) { .section { padding: 32px; } .two-col { grid-template-columns: 1fr; } .mock-contact { grid-template-columns: 1fr; } .mock-skills { grid-template-columns: repeat(3,1fr); } .anim-spec { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════════════
+     SPEC HEADER
+════════════════════════════════════════════════════════ -->
+<div class="spec-header">
+  <p class="section-label">PORTFOLIO BUILD SPECIFICATION · LOVABLE</p>
+  <h1>Sumayyaah Bint Yahya</h1>
+  <p>Sales & Marketing Portfolio · Product-Led Marketing · Full Multi-Page Site</p>
+  <div class="badges">
+    <span class="badge">REACT + REACT ROUTER</span>
+    <span class="badge">6 PAGES + DYNAMIC ROUTES</span>
+    <span class="badge violet">FULLY RESPONSIVE</span>
+    <span class="badge violet">FRAMER MOTION ANIMATIONS</span>
+    <span class="badge">COLOUR PALETTE: EMBER & OBSIDIAN</span>
+    <span class="badge violet">REAL CONTENT — NOT LOREM IPSUM</span>
+  </div>
+</div>
+
+<!-- STICKY NAV -->
+<nav class="spec-nav">
+  <a href="#tokens">Tokens</a>
+  <a href="#nav-footer">Nav & Footer</a>
+  <a href="#home">Home</a>
+  <a href="#about">About</a>
+  <a href="#projects">Projects</a>
+  <a href="#case-study">Case Study</a>
+  <a href="#blog">Blog</a>
+  <a href="#contact">Contact</a>
+  <a href="#animations">Animations</a>
+  <a href="#routing">Routing</a>
+  <a href="#data">Content & Data</a>
+</nav>
+
+
+<!-- ════════════════════════════════════════════════════════
+     SECTION 1: DESIGN TOKENS
+════════════════════════════════════════════════════════ -->
+<section class="section" id="tokens">
+  <p class="section-label">01 · DESIGN SYSTEM</p>
+  <h2 class="section-title">Design Tokens & Typography</h2>
+  <p class="section-sub">Every visual decision in the build must derive from these tokens. No hardcoded hex values in components — use CSS custom properties throughout.</p>
+
+  <div class="token-grid">
+    <div class="token-card">
+      <div class="token-swatch" style="background:#09090E;"></div>
+      <div class="token-info">
+        <div class="token-name">--bg</div>
+        <div class="token-value">#09090E</div>
+        <div class="token-role">Page background</div>
+      </div>
+    </div>
+    <div class="token-card">
+      <div class="token-swatch" style="background:#111118;"></div>
+      <div class="token-info">
+        <div class="token-name">--surface</div>
+        <div class="token-value">#111118</div>
+        <div class="token-role">Cards, panels</div>
+      </div>
+    </div>
+    <div class="token-card">
+      <div class="token-swatch" style="background:#16161F;"></div>
+      <div class="token-info">
+        <div class="token-name">--surface2</div>
+        <div class="token-value">#16161F</div>
+        <div class="token-role">Nested cards, headers</div>
+      </div>
+    </div>
+    <div class="token-card">
+      <div class="token-swatch" style="background:#C4773A;"></div>
+      <div class="token-info">
+        <div class="token-name">--accent</div>
+        <div class="token-value">#C4773A</div>
+        <div class="token-role">Primary accent / copper</div>
+      </div>
+    </div>
+    <div class="token-card">
+      <div class="token-swatch" style="background:#8B5CF6;"></div>
+      <div class="token-info">
+        <div class="token-name">--violet</div>
+        <div class="token-value">#8B5CF6</div>
+        <div class="token-role">Secondary / tech accent</div>
+      </div>
+    </div>
+    <div class="token-card">
+      <div class="token-swatch" style="background:#E8E2D9;"></div>
+      <div class="token-info">
+        <div class="token-name">--text</div>
+        <div class="token-value">#E8E2D9</div>
+        <div class="token-role">Body text, warm white</div>
+      </div>
+    </div>
+    <div class="token-card">
+      <div class="token-swatch" style="background:#7A7A8C;"></div>
+      <div class="token-info">
+        <div class="token-name">--muted</div>
+        <div class="token-value">#7A7A8C</div>
+        <div class="token-role">Secondary text, labels</div>
+      </div>
+    </div>
+    <div class="token-card">
+      <div class="token-swatch" style="background:rgba(196,119,58,0.18); border: 1px solid rgba(255,255,255,0.04);"></div>
+      <div class="token-info">
+        <div class="token-name">--border</div>
+        <div class="token-value">rgba(196,119,58,0.18)</div>
+        <div class="token-role">Card borders</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="two-col" style="margin-top:32px;">
+    <div class="spec-block">
+      <h4>TYPOGRAPHY STACK</h4>
+      <ul>
+        <li><strong>Display/Headings:</strong> Playfair Display — loaded from Google Fonts. Use for h1–h3, pull quotes, and the hero tagline. Weight 700 for hero, 600 for sub-headings.</li>
+        <li><strong>Body:</strong> Inter — for all paragraph text, descriptions, and UI labels. Weight 400 regular, 500 medium.</li>
+        <li><strong>Mono/Labels:</strong> Space Grotesk — for eyebrow labels, tags, nav links, category chips, and all-caps headings. Letter-spacing 0.08–0.15em depending on size.</li>
+      </ul>
+    </div>
+    <div class="violet-block">
+      <h4>TYPE SCALE</h4>
+      <ul>
+        <li><code>h1</code> — 3.5rem / Playfair Display 700</li>
+        <li><code>h2</code> — 2.2rem / Playfair Display 600</li>
+        <li><code>h3</code> — 1.5rem / Playfair Display 600</li>
+        <li><code>h4</code> — 1rem / Playfair Display 600</li>
+        <li><code>body</code> — 0.95rem / Inter 400</li>
+        <li><code>label</code> — 0.7rem / Space Grotesk 500, uppercase, tracked</li>
+        <li><code>tag</code> — 0.65rem / Space Grotesk 500</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="spec-block" style="margin-top:16px;">
+    <h4>BACKGROUND TEXTURE</h4>
+    <p>Apply a subtle SVG grain noise texture as a pseudo-element overlay across the entire <code>body</code>. Opacity 0.025–0.035. This removes the flat, digital feel and adds tactility. Use: <code>background-image: url("data:image/svg+xml,...noise-filter...")</code> or a repeating PNG grain tile at low opacity.</p>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════
+     SECTION 2: NAVIGATION & FOOTER
+════════════════════════════════════════════════════════ -->
+<section class="section" id="nav-footer">
+  <p class="section-label">02 · PERSISTENT COMPONENTS</p>
+  <h2 class="section-title">Navigation & Footer</h2>
+  <p class="section-sub">These components appear on every page. Navigation must scroll-aware. Footer is always full-width at the bottom of every route.</p>
+
+  <h3 style="font-family:var(--font-mono); font-size:13px; color:var(--muted); letter-spacing:0.1em; margin-bottom:16px;">NAVIGATION — LIVE MOCK</h3>
+  <div class="mock-nav">
+    <div class="mock-logo">SBY</div>
+    <div class="mock-links">
+      <span class="active">Home</span>
+      <span>About</span>
+      <span>Projects</span>
+      <span>Blog</span>
+      <span>Contact</span>
+    </div>
+    <button class="mock-cta">Download CV</button>
+  </div>
+
+  <div class="two-col" style="margin-top:24px;">
+    <div class="spec-block">
+      <h4>NAV BEHAVIOUR</h4>
+      <ul>
+        <li>Default state: fully transparent, no background</li>
+        <li>On scroll > 60px: background becomes <code>rgba(9,9,14,0.92)</code> with <code>backdrop-filter: blur(16px)</code> and a 1px bottom border in <code>--border</code>. Animate this transition with 0.3s ease.</li>
+        <li>Active page link: <code>--text</code> colour + a 2px bottom border in <code>--accent</code></li>
+        <li>Logo "SBY" in Playfair Display, <code>--accent</code> colour. Links to <code>/</code></li>
+        <li>"Download CV" button: copper background, white text, opens CV modal or <code>/cv</code> page in new tab</li>
+        <li>Mobile: hamburger icon (3 lines → X on open). Full-screen dark overlay with stacked nav links centred. Links animate in staggered (Framer Motion). Close on link click or outside tap.</li>
+      </ul>
+    </div>
+    <div class="violet-block">
+      <h4>FOOTER SPEC</h4>
+      <ul>
+        <li>Three-column layout: Brand left, Links centre, Contact right</li>
+        <li>Left: "SBY" logo + tagline: <em>"I don't just market products. I decide what they become."</em></li>
+        <li>Centre: Home · About · Projects · Blog · Contact</li>
+        <li>Right: LinkedIn icon (links to <code>https://www.linkedin.com/in/SumayyaahBintYahya</code>) + email: <code>sumayyaahbint@gmail.com</code></li>
+        <li>Bottom bar: <em>"© 2026 Sumayyaah Bint Yahya. Built with intent."</em></li>
+        <li>Top border: 1px <code>--border</code>. Background: <code>--surface</code></li>
+        <li>All external links open in new tab with <code>rel="noopener noreferrer"</code></li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 style="font-family:var(--font-mono); font-size:13px; color:var(--muted); letter-spacing:0.1em; margin:32px 0 16px;">FOOTER — LIVE MOCK</h3>
+  <div class="mock-footer">
+    <div class="footer-brand">
+      <div class="logo">SBY</div>
+      <div class="tagline">I don't just market products. I decide what they become.</div>
+    </div>
+    <div class="footer-links">
+      <span>Home</span><span>About</span><span>Projects</span><span>Blog</span><span>Contact</span>
+    </div>
+    <div class="footer-right">
+      <div class="social">LinkedIn · sumayyaahbint@gmail.com</div>
+      <div style="font-size:11px; color:var(--muted); margin-top:8px;">© 2026 Sumayyaah Bint Yahya</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════
+     SECTION 3: HOME PAGE
+════════════════════════════════════════════════════════ -->
+<section class="section" id="home">
+  <p class="section-label">03 · PAGE</p>
+  <h2 class="section-title">Home — <span style="color:var(--muted); font-size:1.2rem;">/</span></h2>
+  <p class="section-sub">The homepage is the first impression for both recruiters and founders. It must immediately communicate who Sumayyaah is, what she does, and why it matters — then pull the visitor deeper.</p>
+
+  <!-- HERO MOCK -->
+  <div class="mock-hero">
+    <div class="eyebrow">Sales & Marketing · Product-Led Growth · Brand Strategy</div>
+    <h1>I don't just market products.<br/><em>I decide what they become.</em></h1>
+    <p class="sub">Sumayyaah Bint Yahya · Marketing that makes or mars.</p>
+    <div class="cta-row">
+      <button class="btn-primary">See My Work →</button>
+      <button class="btn-ghost">Download CV</button>
+    </div>
+  </div>
+
+  <div class="spec-block">
+    <h4>HERO SECTION — FULL SPEC</h4>
+    <ul>
+      <li>100vh height. Background: <code>--bg</code> with a radial gradient at top-centre: <code>radial-gradient(ellipse at 50% -10%, rgba(196,119,58,0.12) 0%, transparent 65%)</code></li>
+      <li>Eyebrow label above h1: "Sales & Marketing · Product-Led Growth · Brand Strategy" — Space Grotesk, 11px, tracked, copper colour</li>
+      <li>h1 line 1: "I don't just market products." — Playfair Display 700, 3.5rem, warm white</li>
+      <li>h1 line 2 (italic, accent-coloured): "I decide what they become." — Playfair Display 700 italic, same size, <code>--accent</code> colour</li>
+      <li>Sub-line: "Sumayyaah Bint Yahya · Marketing that makes or mars." — Inter 400, 15px, <code>--muted</code></li>
+      <li>CTA row: Primary button "See My Work →" (copper fill) + Ghost button "Download CV" (transparent, bordered)</li>
+      <li>Hero animation: on page load, eyebrow fades in first (0.3s), then h1 line 1 slides up (0.5s, 30px offset), then h1 line 2 (0.7s), then sub-line (0.9s), then CTAs (1.1s). All using Framer Motion.</li>
+      <li>Ambient particle effect: 20–30 small dots floating slowly using CSS keyframe animation or tsParticles. Opacity 0.15. Colour: mix of copper and violet.</li>
+      <li>Scroll indicator at bottom: animated downward chevron, fades out when user scrolls past 100px</li>
+    </ul>
+  </div>
+
+  <div class="spec-block" style="margin-top:16px;">
+    <h4>ABOUT TEASER SECTION</h4>
+    <ul>
+      <li>Two-column layout. Left: paragraph about Sumayyaah (use this copy): <em>"I'm a Sales & Marketing professional who leans toward product-led marketing — the kind where the product is the proof and the strategy is the story. I've spent time building campaigns, developing brands from briefs, crafting copy that converts, and thinking about the gap between what a product is and what it could mean to the right person."</em></li>
+      <li>Right: three styled stat blocks: <strong>"7+"</strong> Projects Completed · <strong>"3"</strong> Specialisations · <strong>"1"</strong> Philosophy (make it matter)</li>
+      <li>Stats: large number in Playfair Display + label in Space Grotesk mono below. Each stat in its own card with <code>--surface</code> background and copper left-border.</li>
+      <li>Below copy: "More about me →" link in copper that routes to <code>/about</code></li>
+    </ul>
+  </div>
+
+  <div class="spec-block" style="margin-top:16px;">
+    <h4>FEATURED PROJECTS (3 cards) — from the full project list</h4>
+    <ul>
+      <li>Section heading: "Selected Work" (Playfair Display h2) + sub "A sample of projects delivered during my marketing fellowship."</li>
+      <li>Show exactly 3 project cards — use OatLabs + 2 others from the data file (to be populated)</li>
+      <li>Below the 3 cards: a centred link "View All Projects →" routing to <code>/projects</code></li>
+      <li>Card hover: <code>transform: translateY(-4px)</code>, border changes to <code>rgba(196,119,58,0.5)</code>, subtle box-shadow in copper</li>
+    </ul>
+  </div>
+
+  <h3 style="font-family:var(--font-mono); font-size:13px; color:var(--muted); letter-spacing:0.1em; margin:24px 0 16px;">PROJECT CARD — MOCK</h3>
+  <div class="component-row">
+    <div class="mock-project-card">
+      <div class="mock-project-thumb">
+        <span class="brand-label">OatLabs</span>
+      </div>
+      <div class="mock-project-body">
+        <span class="tag tag-accent">BRAND STRATEGY</span>
+        <h4>The Boring Product Campaign</h4>
+        <p>Built OatLabs from a blank brief — brand positioning, full funnel, 4 ad copies, 3 growth hacks, and a $0→$10K revenue roadmap.</p>
+        <a class="case-link" href="#">View Case Study →</a>
+      </div>
+    </div>
+    <div class="mock-project-card">
+      <div class="mock-project-thumb" style="background:linear-gradient(135deg,#101a14 0%,#0f1020 100%);">
+        <span class="brand-label" style="color:rgba(139,92,246,0.4);">Startup B</span>
+      </div>
+      <div class="mock-project-body">
+        <span class="tag tag-violet">GROWTH MARKETING</span>
+        <h4>Project Name Placeholder</h4>
+        <p>Short one-line description of the project and the key outcome or strategy developed.</p>
+        <a class="case-link" href="#">View Case Study →</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec-block" style="margin-top:16px;">
+    <h4>SKILLS SNAPSHOT SECTION</h4>
+    <ul>
+      <li>Heading: "What I Work With" + sub: "Tools, disciplines, and the thinking that connects them."</li>
+      <li>Grid of 10 chips: Copywriting · Email Marketing · SEO · Funnel Strategy · Brand Positioning · Content Marketing · Growth Hacking · Campaign Planning · Market Research · Product Marketing</li>
+      <li>Each chip: small relevant emoji or icon + label. Alternate between <code>--accent</code> and <code>--violet</code> tinted backgrounds for visual rhythm.</li>
+    </ul>
+  </div>
+
+  <h3 style="font-family:var(--font-mono); font-size:13px; color:var(--muted); letter-spacing:0.1em; margin:24px 0 16px;">SKILLS SNAPSHOT — MOCK</h3>
+  <div class="mock-skills">
+    <div class="skill-chip"><div class="icon">✍️</div><div class="label">Copywriting</div></div>
+    <div class="skill-chip"><div class="icon">📧</div><div class="label">Email Marketing</div></div>
+    <div class="skill-chip"><div class="icon">🔍</div><div class="label">SEO</div></div>
+    <div class="skill-chip"><div class="icon">🎯</div><div class="label">Funnel Strategy</div></div>
+    <div class="skill-chip"><div class="icon">📣</div><div class="label">Brand Positioning</div></div>
+  </div>
+
+  <div class="spec-block" style="margin-top:24px;">
+    <h4>TESTIMONIALS STRIP</h4>
+    <ul>
+      <li>Heading: "What People Say"</li>
+      <li>3 testimonial cards in a row (placeholder content — to be updated with real testimonials)</li>
+      <li>Each card: opening quote mark in <code>--accent</code> (large, decorative) + quote text in Playfair Display italic + name + role below in Space Grotesk mono</li>
+      <li>Placeholder names: "Colleague, HNG Fellowship" — update when real testimonials are available</li>
+    </ul>
+  </div>
+
+  <h3 style="font-family:var(--font-mono); font-size:13px; color:var(--muted); letter-spacing:0.1em; margin:24px 0 16px;">TESTIMONIAL CARD — MOCK</h3>
+  <div class="component-row">
+    <div class="mock-testimonial">
+      <div class="quote">Her ability to take a blank brief and return a fully-realised strategy with conviction is rare at any level, let alone entry-level.</div>
+      <div class="author">COLLEAGUE · MARKETING FELLOWSHIP 2026</div>
+    </div>
+    <div class="mock-testimonial">
+      <div class="quote">The OatLabs campaign she built wasn't just creative — it was structured, commercially-minded, and ready to execute. I'd hire her.</div>
+      <div class="author">PEER REVIEWER · INTERNSHIP STAGE 2</div>
+    </div>
+  </div>
+
+  <div class="spec-block" style="margin-top:24px;">
+    <h4>CTA BANNER (bottom of home)</h4>
+    <ul>
+      <li>Full-width card with <code>--surface</code> background + 1px top and bottom border in <code>--border</code></li>
+      <li>Subtle copper radial glow at centre behind text</li>
+      <li>Heading: "Let's build something that matters." (Playfair Display, large)</li>
+      <li>Sub: "Open to full-time roles, freelance projects, and conversations about marketing."</li>
+      <li>Button: "Get in Touch" — routes to <code>/contact</code></li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════
+     SECTION 4: ABOUT PAGE
+════════════════════════════════════════════════════════ -->
+<section class="section" id="about">
+  <p class="section-label">04 · PAGE</p>
+  <h2 class="section-title">About — <span style="color:var(--muted); font-size:1.2rem;">/about</span></h2>
+  <p class="section-sub">This page tells Sumayyaah's story beyond bullet points. It should feel like a conversation with someone who knows exactly what they're about.</p>
+
+  <div class="page-spec">
+    <div class="page-spec-header">
+      <h3>ABOUT PAGE LAYOUT</h3>
+      <span class="route-tag">/about</span>
+    </div>
+    <div class="page-spec-body">
+      <div class="wireframe"><span class="wf-accent">┌─────────────────────────────────────────────────────────────────┐</span>
+<span class="wf-accent">│  HERO BANNER                                                    │</span>
+<span class="wf-accent">│  [Profile photo placeholder — left]  Name + Title + Tagline    │</span>
+<span class="wf-accent">│  "Sumayyaah Bint Yahya · Sales & Marketing Professional"       │</span>
+<span class="wf-accent">└─────────────────────────────────────────────────────────────────┘</span>
+<span class="wf-text">┌─────────────────────────────┐  ┌──────────────────────────────┐</span>
+<span class="wf-text">│  THE STORY (3 paragraphs)   │  │  PULL QUOTE (styled card)    │</span>
+<span class="wf-text">│  Bio copy block             │  │  "A marketer can make        │</span>
+<span class="wf-text">│  left column                │  │   or mar a product."         │</span>
+<span class="wf-text">└─────────────────────────────┘  └──────────────────────────────┘</span>
+<span class="wf-violet">┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐</span>
+<span class="wf-violet">│ Strategy │ │  Copy    │ │ Audience │ │ Systems  │</span>
+<span class="wf-violet">│  First   │ │  That    │ │ Obsess-  │ │ Thinker  │</span>
+<span class="wf-violet">│  [icon]  │ │ Converts │ │   ion    │ │  [icon]  │</span>
+<span class="wf-violet">└──────────┘ └──────────┘ └──────────┘ └──────────┘</span>
+<span class="wf-text">┌─────────────────────────────────────────────────────────────────┐</span>
+<span class="wf-text">│  SKILLS & TOOLS — Grouped by category                          │</span>
+<span class="wf-text">│  Strategy & Positioning │ Content │ Growth & Analytics │ Tools  │</span>
+<span class="wf-text">└─────────────────────────────────────────────────────────────────┘</span>
+<span class="wf-accent">┌─────────────────────────────────────────────────────────────────┐</span>
+<span class="wf-accent">│  CTA: [Download CV]  [Contact Me]                               │</span>
+<span class="wf-accent">└─────────────────────────────────────────────────────────────────┘</span></div>
+
+      <div class="spec-block">
+        <h4>ABOUT PAGE COPY — USE EXACTLY</h4>
+        <ul>
+          <li><strong>Paragraph 1:</strong> "I'm Sumayyaah Bint Yahya — a Sales & Marketing professional who leans toward product-led marketing. I believe the most powerful campaigns aren't the loudest ones. They're the ones that understand what a product is really offering, who it's really for, and what story makes those two things click."</li>
+          <li><strong>Paragraph 2:</strong> "What draws me to this work is a conviction I hold tightly: as a marketer, I can make or mar a product. That weight is what makes it interesting. I've spent time building brand strategies, writing ad copy that converts, designing email flows, and developing growth systems — across products as different as oats and fintech."</li>
+          <li><strong>Paragraph 3:</strong> "I'm currently looking for roles where strategy is taken seriously and execution is celebrated. If you're building something that needs to be understood, positioned, and loved by the right people — let's talk."</li>
+          <li><strong>Pull quote (styled separately):</strong> "A marketer can make or mar a product. That weight is what makes this work interesting."</li>
+        </ul>
+      </div>
+
+      <div class="spec-block" style="margin-top:12px;">
+        <h4>VALUE PROP CARDS (4 cards, 2×2 grid)</h4>
+        <ul>
+          <li><strong>Card 1 — Strategy First:</strong> Icon: 🎯 | "I build from insight, not instinct. Every campaign starts with a clear understanding of the product, the audience, and the gap between them."</li>
+          <li><strong>Card 2 — Copy That Converts:</strong> Icon: ✍️ | "Words are not decoration. I write ad copy, email flows, and landing page content that move people from curious to convinced."</li>
+          <li><strong>Card 3 — Audience Obsession:</strong> Icon: 👁️ | "Personas aren't a slide to fill. I build them from real behavioural insight and use them to pressure-test every creative decision."</li>
+          <li><strong>Card 4 — Systems Thinker:</strong> Icon: ⚙️ | "Marketing is a system, not a series of moments. I think in funnels, email sequences, and growth loops — not one-off campaigns."</li>
+        </ul>
+      </div>
+
+      <div class="spec-block" style="margin-top:12px;">
+        <h4>SKILLS & TOOLS — GROUPED TAGS</h4>
+        <ul>
+          <li><strong>Strategy & Positioning:</strong> Brand Strategy · Market Research · Customer Personas · Product Positioning · Competitive Analysis · Go-To-Market Strategy</li>
+          <li><strong>Content & Copywriting:</strong> Ad Copywriting · Email Flows · Landing Pages · Content Marketing · Storytelling · UGC Strategy</li>
+          <li><strong>Growth & Analytics:</strong> Funnel Building · Growth Hacking · Email Marketing · Lead Generation · Campaign Planning · Conversion Optimisation</li>
+          <li><strong>Tools & Platforms:</strong> Canva · Notion · Google Analytics · Mailchimp · Airtable · Meta Ads Manager · TikTok Ads</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════
+     SECTION 5: PROJECTS PAGE
+════════════════════════════════════════════════════════ -->
+<section class="section" id="projects">
+  <p class="section-label">05 · PAGE</p>
+  <h2 class="section-title">Projects — <span style="color:var(--muted); font-size:1.2rem;">/projects</span></h2>
+  <p class="section-sub">The grid shows all case studies. Filterable by category. Each card links to its own dynamic case study route.</p>
+
+  <div class="page-spec">
+    <div class="page-spec-header">
+      <h3>PROJECTS GRID PAGE</h3>
+      <span class="route-tag">/projects</span>
+    </div>
+    <div class="page-spec-body">
+      <div class="wireframe"><span class="wf-accent">┌─────────────────────────────────────────────────────────────────┐</span>
+<span class="wf-accent">│  PAGE HEADER                                                    │</span>
+<span class="wf-accent">│  "Selected Work"   Sub: "7 projects. Real briefs. Real output." │</span>
+<span class="wf-accent">└─────────────────────────────────────────────────────────────────┘</span>
+<span class="wf-violet">[ ALL ] [ BRAND STRATEGY ] [ GROWTH ] [ CONTENT ] [ SEO ] [ SALES ]</span>
+<span class="wf-text">┌──────────────┐  ┌──────────────┐  ┌──────────────┐</span>
+<span class="wf-text">│  [Thumbnail] │  │  [Thumbnail] │  │  [Thumbnail] │</span>
+<span class="wf-text">│  OatLabs     │  │  Startup B   │  │  Startup C   │</span>
+<span class="wf-text">│  [TAG]       │  │  [TAG]       │  │  [TAG]       │</span>
+<span class="wf-text">│  Title       │  │  Title       │  │  Title       │</span>
+<span class="wf-text">│  Summary     │  │  Summary     │  │  Summary     │</span>
+<span class="wf-text">│  View →      │  │  View →      │  │  View →      │</span>
+<span class="wf-text">└──────────────┘  └──────────────┘  └──────────────┘</span>
+<span class="wf-text">┌──────────────┐  ┌──────────────┐  ┌──────────────┐</span>
+<span class="wf-text">│  Startup D   │  │  Startup E   │  │  Startup F   │</span>
+<span class="wf-text">│  ...         │  │  ...         │  │  ...         │</span>
+<span class="wf-text">└──────────────┘  └──────────────┘  └──────────────┘</span></div>
+
+      <div class="spec-block">
+        <h4>FILTER BAR BEHAVIOUR</h4>
+        <ul>
+          <li>Filters: All · Brand Strategy · Growth Marketing · Content · SEO · Campaign · Sales</li>
+          <li>Active filter: <code>--accent</code> background, white text</li>
+          <li>Inactive: transparent background, <code>--muted</code> text, <code>--border</code> border</li>
+          <li>On filter click: cards that don't match animate out (<code>opacity: 0, scale: 0.95</code>), matching cards animate in. Use Framer Motion AnimatePresence + layout animation.</li>
+          <li>Filter bar is sticky just below the nav on scroll.</li>
+        </ul>
+      </div>
+
+      <div class="spec-block" style="margin-top:12px;">
+        <h4>PROJECT CARD SPEC</h4>
+        <ul>
+          <li>Card background: <code>--surface</code>, border: <code>--border</code>, border-radius: 14px</li>
+          <li>Thumbnail area (top of card): 200px tall. Use a dark gradient background with brand name as large watermark text. When project images are available, show them here.</li>
+          <li>Bottom of card body: brand name tag + category chip + project title (Playfair Display h4) + one-line description + "View Case Study →" link in <code>--accent</code></li>
+          <li>Hover: card lifts 4px, border transitions to <code>rgba(196,119,58,0.5)</code></li>
+          <li>The card title and "View Case Study →" link must route to <code>/projects/[slug]</code></li>
+        </ul>
+      </div>
+
+      <div class="spec-block" style="margin-top:12px;">
+        <h4>OATLABS PROJECT DATA (pre-populate this card)</h4>
+        <ul>
+          <li><strong>Slug:</strong> oatlabs-boring-product-campaign</li>
+          <li><strong>Brand:</strong> OatLabs</li>
+          <li><strong>Title:</strong> The Boring Product Campaign</li>
+          <li><strong>Category:</strong> Brand Strategy</li>
+          <li><strong>Tags:</strong> Brand Strategy · Copywriting · Email Marketing · Growth</li>
+          <li><strong>Summary:</strong> Turned oats — arguably the least exciting food product — into a compelling DTC brand with a full go-to-market strategy, targeting $0 to $10K revenue in 90 days.</li>
+          <li><strong>Thumbnail colour:</strong> Linear gradient from #1a0f08 to #1a1020</li>
+          <li>Remaining 6 project cards: use placeholder structure — brand name, title "Project Coming Soon", category tag, summary placeholder. These will be updated when the remaining task briefs are submitted.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════
+     SECTION 6: CASE STUDY PAGE
+════════════════════════════════════════════════════════ -->
+<section class="section" id="case-study">
+  <p class="section-label">06 · DYNAMIC PAGE</p>
+  <h2 class="section-title">Case Study — <span style="color:var(--muted); font-size:1.2rem;">/projects/[slug]</span></h2>
+  <p class="section-sub">One template page that renders any project's data. Pre-populated with OatLabs. All 7–9 projects will use this same template.</p>
+
+  <div class="mock-case-study">
+    <div class="mock-cs-hero">
+      <div class="back">← All Projects</div>
+      <span class="tag tag-accent" style="margin-bottom:16px; display:inline-block;">BRAND STRATEGY</span>
+      <h2>The Boring Product Campaign</h2>
+      <p style="color:var(--muted); font-size:14px; margin-top:8px;">OatLabs · April 2026 · Stage 2, Marketing Fellowship</p>
+      <p style="color:var(--text); font-size:15px; margin-top:16px; max-width:560px;">Turned oats — the world's most "boring" food product — into a compelling DTC brand with full positioning, funnel, ad system, and a $0 → $10K revenue roadmap.</p>
+    </div>
+    <div class="mock-cs-body">
+      <div class="cs-section">
+        <div class="label">THE BRIEF</div>
+        <h4>Overview</h4>
+        <p>Stage 2 of the HNG Marketing Fellowship challenged interns to select a low-interest, everyday product and build a complete marketing strategy to drive it from $0 to $10K revenue. I chose oats — not despite the fact that they're boring, but because of it.</p>
+      </div>
+      <div class="cs-section">
+        <div class="label">THE CHALLENGE</div>
+        <h4>What made this hard</h4>
+        <p>Oats have a retention problem: people buy once, eat them plain, get bored, and never come back. The category is large ($9.5B globally) but the repeat purchase rate collapses because nobody teaches consumers how to make them interesting. The brief wasn't just "market oats" — it was "make oats a product people talk about."</p>
+      </div>
+      <div class="metric-row">
+        <div class="metric-card"><div class="num">$10K</div><div class="lbl">Revenue Target</div></div>
+        <div class="metric-card"><div class="num">90</div><div class="lbl">Days to Target</div></div>
+        <div class="metric-card"><div class="num">3</div><div class="lbl">Customer Personas</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-spec" style="margin-top:24px;">
+    <div class="page-spec-header">
+      <h3>CASE STUDY — FULL SECTION SPEC</h3>
+      <span class="route-tag">/projects/oatlabs-boring-product-campaign</span>
+    </div>
+    <div class="page-spec-body">
+      <div class="spec-block">
+        <h4>SECTION ORDER & CONTENT — OATLABS</h4>
+        <ul>
+          <li><strong>Back nav:</strong> "← All Projects" link top-left, routes to <code>/projects</code></li>
+          <li><strong>Hero:</strong> Category tag + Project title + Brand name + Date + Role + One-paragraph overview</li>
+          <li><strong>Section 01 — The Brief:</strong> Copy: "Stage 2 of the HNG Marketing Fellowship: select a boring everyday product and build a complete strategy to grow it from $0 to $10K. I chose oats."</li>
+          <li><strong>Section 02 — The Challenge:</strong> The retention problem. Nobody teaches people to make oats interesting. Consumers buy once, get bored, and churn. Category is large ($9.5B) but repeat purchase rate collapses. The brief required positioning oats as a system, not a product.</li>
+          <li><strong>Section 03 — My Role:</strong> Title: "Brand Strategist & Campaign Designer". Responsibilities: brand naming and concept (OatLabs — The Morning Formula™), customer persona development (3 personas), full-funnel strategy (AIDA), ad copy (4 variations targeting different audience segments), email sequence (welcome → nurture → conversion), growth hack design (3 strategies), landing page prototyping (2 versions), revenue roadmap ($0–$10K in 90 days), visual ad creatives design.</li>
+          <li><strong>Section 04 — Strategy & Approach:</strong> The core insight: oats are a base, not a meal. Repositioned the product as a modular morning ritual system. The "boring" label became the brand's superpower. OatLabs = Base (premium rolled oats) + Lab (mix-in system) + Ritual (a repeatable morning system). Tagline: "Your daily formula. Your flavour rules."</li>
+          <li><strong>Section 05 — Execution:</strong> Full-funnel built across four stages: Awareness (TikTok 'Boring Morning' series, paid social), Interest (recipe content, UGC campaign, email newsletter), Decision (landing page, 7-Day Formula Challenge, retargeting), Action (welcome email flow, referral programme). Tools used chips: Canva · Google Slides · Airtable · Email Copywriting · Framer/Netlify</li>
+          <li><strong>Section 05b — Ad Creatives Gallery:</strong> Show the 4 ad creative images. Grid layout, 2×2. Click to enlarge (lightbox). Caption each with the ad name and target audience.</li>
+          <li><strong>Section 05c — Landing Page Links:</strong> Two card links with "Visit Live Page →" buttons that open in new tab: Version 1: <code>https://69eb1c6c5f96d1fbc02477f1--magnificent-fairy-08162e.netlify.app/</code> | Version 2: <code>https://69eaae16b565e6c27894a34a--magnificent-fairy-08162e.netlify.app/</code>. Label them "Landing Page Prototype A" and "Landing Page Prototype B". Style as clickable preview cards with the URL shown and an external link icon.</li>
+          <li><strong>Section 06 — Results & Outcomes:</strong> 3 metric cards: "$10K Revenue Target Modelled" · "3 Distinct Customer Personas Developed" · "3-Phase 90-Day Roadmap Built". Sub-note: "This was a strategy project — outcomes represent modelled projections from a $0 starting point."</li>
+          <li><strong>Section 07 — Key Learnings:</strong> 1. "The most powerful brand position is one your competitors are too proud to claim — owning 'boring' made OatLabs distinct." 2. "Retention is a product problem before it's a marketing problem. The formula system solved churn at the product level." 3. "UGC scales reach without budget — the Creator Kitchen and Formula Drop models were designed to generate content flywheel from day one."</li>
+          <li><strong>Bottom navigation:</strong> "Next Project →" links to the next case study slug</li>
+        </ul>
+      </div>
+
+      <div class="violet-block" style="margin-top:12px;">
+        <h4>PRODUCT IMAGES — USE THESE ASSETS IN THE CASE STUDY</h4>
+        <ul>
+          <li>Ad Creative 1 (Ad_creative_1.png): "You don't hate oats. You hate boring." — split bowl before/after</li>
+          <li>Ad Creative 2 (Ad_creative_2.png): "Same oats. Different life." — Day 3 vs Day 30 split</li>
+          <li>Ad Creative 3 (Ad_creative_3.png): "You've been eating oats wrong." — deep brown editorial style</li>
+          <li>Product shot — Coffee Boost formula (Coffee_Boost__OatLabs.png)</li>
+          <li>Product shot — Spice Cabinet (Spice_Cabinet__OatLabs.png)</li>
+          <li>Product shot — Spiced Ginger (Spiced_Ginger__OatLabs_.png)</li>
+          <li>Recipe card (Recipe_card.png)</li>
+          <li>OatLabs flat lay (OatLabs.png)</li>
+          <li>Note: these images must be uploaded to Lovable's asset manager and referenced by filename.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════
+     SECTION 7: BLOG
+════════════════════════════════════════════════════════ -->
+<section class="section" id="blog">
+  <p class="section-label">07 · PAGE</p>
+  <h2 class="section-title">Blog / Insights — <span style="color:var(--muted); font-size:1.2rem;">/blog</span></h2>
+  <p class="section-sub">Marketing thinking, written down. Articles can be added as data entries. Individual posts render from a template.</p>
+
+  <div class="page-spec">
+    <div class="page-spec-header">
+      <h3>BLOG LISTING + POST TEMPLATE</h3>
+      <span class="route-tag">/blog · /blog/[slug]</span>
+    </div>
+    <div class="page-spec-body">
+      <div class="spec-block">
+        <h4>BLOG INDEX PAGE (/blog)</h4>
+        <ul>
+          <li>Page header: "Insights" (Playfair Display h1) + sub: "Marketing thinking. Written down."</li>
+          <li>Filter tags: All · Strategy · Growth · Branding · Opinion</li>
+          <li>Article grid: 3 columns desktop, 2 tablet, 1 mobile</li>
+          <li>Each card: thumbnail placeholder (gradient) + category tag + article title + date + 2-line excerpt + "Read →" link</li>
+          <li>Pre-populate with 3 placeholder articles with on-brand titles: "Why Boring Products Make the Best Brands", "The Formula for Retention: What Oats Taught Me About Repeat Purchase", "Product-Led Marketing Is Not a Trend — It's the Only Strategy That Scales"</li>
+          <li>Each placeholder article body: 3–4 paragraphs of on-brand placeholder copy about marketing strategy</li>
+        </ul>
+      </div>
+      <div class="spec-block" style="margin-top:12px;">
+        <h4>INDIVIDUAL POST PAGE (/blog/[slug])</h4>
+        <ul>
+          <li>"← Back to Insights" link top-left</li>
+          <li>Article title (large, Playfair Display), date, reading time estimate, category tag</li>
+          <li>Hero image placeholder (full width, 360px tall)</li>
+          <li>Body: narrow centred reading column (max-width 680px), Inter 16px, line-height 1.9</li>
+          <li>End of article: "More Insights →" section with 2 related article card teasers</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════
+     SECTION 8: CONTACT
+════════════════════════════════════════════════════════ -->
+<section class="section" id="contact">
+  <p class="section-label">08 · PAGE</p>
+  <h2 class="section-title">Contact — <span style="color:var(--muted); font-size:1.2rem;">/contact</span></h2>
+
+  <div class="two-col">
+    <div class="contact-info">
+      <div style="font-family:var(--font-display); font-size:1.8rem; margin-bottom:8px;">Let's Talk.</div>
+      <div style="color:var(--muted); font-size:13px; margin-bottom:24px;">Whether it's a role, a project, or a conversation about marketing — my inbox is open.</div>
+      <div class="item">
+        <div class="lbl">Email</div>
+        <a href="mailto:sumayyaahbint@gmail.com">sumayyaahbint@gmail.com</a>
+      </div>
+      <div class="item">
+        <div class="lbl">LinkedIn</div>
+        <a href="https://www.linkedin.com/in/SumayyaahBintYahya" target="_blank" rel="noopener noreferrer">linkedin.com/in/SumayyaahBintYahya ↗</a>
+      </div>
+      <div class="item">
+        <div class="lbl">CV</div>
+        <button class="btn-primary" style="font-size:12px; padding:10px 20px;">Download CV</button>
+      </div>
+    </div>
+    <div class="contact-form">
+      <div class="form-field"><label>Full Name</label><input type="text" placeholder="Your name" /></div>
+      <div class="form-field"><label>Email Address</label><input type="email" placeholder="your@email.com" /></div>
+      <div class="form-field"><label>Subject</label>
+        <select>
+          <option>Job Opportunity</option>
+          <option>Project Collaboration</option>
+          <option>Freelance Work</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="form-field"><label>Message</label><textarea placeholder="What's on your mind?"></textarea></div>
+      <button class="btn-primary" style="width:100%;">Send Message →</button>
+    </div>
+  </div>
+
+  <div class="spec-block" style="margin-top:24px;">
+    <h4>CONTACT PAGE FUNCTIONAL REQUIREMENTS</h4>
+    <ul>
+      <li>Email link <code>sumayyaahbint@gmail.com</code> must be a real <code>mailto:</code> link</li>
+      <li>LinkedIn must open <code>https://www.linkedin.com/in/SumayyaahBintYahya</code> in a new tab</li>
+      <li>Contact form: wire up with Formspree (free tier) or Netlify Forms so messages actually send to Sumayyaah's email. On submit: show a success state "Message sent. I'll be in touch." replacing the form.</li>
+      <li>"Download CV" button: links to a placeholder PDF for now. A real CV PDF will be uploaded later.</li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════
+     SECTION 9: CV VIEWER
+════════════════════════════════════════════════════════ -->
+<section class="section" id="cv">
+  <p class="section-label">09 · PAGE / MODAL</p>
+  <h2 class="section-title">CV Viewer — <span style="color:var(--muted); font-size:1.2rem;">/cv</span></h2>
+
+  <div class="spec-block">
+    <h4>CV PAGE SPEC</h4>
+    <ul>
+      <li>Route: <code>/cv</code>. Also accessible from the "Download CV" nav button and footer.</li>
+      <li>Page header: "Curriculum Vitae" + sub: "Sumayyaah Bint Yahya · Sales & Marketing Professional"</li>
+      <li>Embed a PDF viewer using <code>&lt;iframe src="cv.pdf" width="100%" height="800px"&gt;</code> so the CV can be read directly on the page without downloading</li>
+      <li>Below the viewer: two buttons side by side: "Download PDF" (anchor download link) + "Back to Portfolio" (routes to <code>/</code>)</li>
+      <li>For now, use a placeholder PDF card with copper border and a note: "CV will be uploaded here." The iframe will be activated when the real CV PDF is added.</li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════
+     SECTION 10: ANIMATIONS
+════════════════════════════════════════════════════════ -->
+<section class="section" id="animations">
+  <p class="section-label">10 · MOTION SPEC</p>
+  <h2 class="section-title">Animations & Interactions</h2>
+  <p class="section-sub">Every animation should feel intentional, not decorative. Use Framer Motion throughout. Respect prefers-reduced-motion.</p>
+
+  <div class="anim-spec">
+    <div class="anim-card">
+      <h4>PAGE LOAD / HERO REVEAL</h4>
+      <p>Staggered entry: eyebrow (0.2s delay) → h1 line 1 (0.4s) → h1 line 2 (0.6s) → sub-line (0.8s) → CTAs (1.0s). Each slides up 24px from below with opacity 0→1. Easing: easeOut. Duration per item: 0.5s.</p>
+    </div>
+    <div class="anim-card">
+      <h4>SCROLL REVEAL</h4>
+      <p>Every section's content animates in when it enters the viewport. Use Framer Motion's <code>whileInView</code>: <code>opacity: 0→1, y: 20→0</code>, duration 0.5s, once:true. Stagger child elements by 0.1s.</p>
+    </div>
+    <div class="anim-card">
+      <h4>CARD HOVER</h4>
+      <p>Project cards: <code>whileHover: {y: -4, boxShadow: "0 16px 40px rgba(196,119,58,0.15)"}</code>. Border transitions to <code>rgba(196,119,58,0.5)</code>. Duration: 0.2s. Smooth ease.</p>
+    </div>
+    <div class="anim-card">
+      <h4>NAV SCROLL BEHAVIOUR</h4>
+      <p>On scroll > 60px: nav background animates to <code>rgba(9,9,14,0.92)</code> with blur. Use a scroll event listener + CSS transition or Framer Motion layout animation. Transition: 0.3s ease.</p>
+    </div>
+    <div class="anim-card">
+      <h4>MOBILE MENU</h4>
+      <p>Hamburger → X rotation: 0.3s. Full-screen overlay slides in from right or fades in at 0.25s. Nav links stagger in from right: 0.05s delay per item. Close on link click with reverse animation.</p>
+    </div>
+    <div class="anim-card">
+      <h4>PAGE TRANSITIONS</h4>
+      <p>Between routes: outgoing page fades to opacity 0 over 0.2s, incoming page fades in from opacity 0 over 0.3s with a 20px upward slide. Use Framer Motion <code>AnimatePresence</code> with <code>mode="wait"</code>.</p>
+    </div>
+  </div>
+
+  <div class="violet-block" style="margin-top:16px;">
+    <h4>CURSOR (DESKTOP ONLY)</h4>
+    <p>Custom cursor: a small 8px circle in <code>--accent</code> that follows the mouse with a ~60ms lag (spring physics). On hovering links and buttons, the cursor scales up to 28px and transitions to a ring (hollow circle) to indicate interactivity. Hide the default CSS cursor site-wide: <code>cursor: none</code>. Re-enable on mobile/touch. Implement with a global cursor component using <code>useState</code> for position + CSS transform.</p>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════
+     SECTION 11: ROUTING
+════════════════════════════════════════════════════════ -->
+<section class="section" id="routing">
+  <p class="section-label">11 · ARCHITECTURE</p>
+  <h2 class="section-title">Routing & File Structure</h2>
+
+  <table>
+    <thead>
+      <tr><th>Route</th><th>Component</th><th>Description</th><th>Dynamic?</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>/</code></td><td>HomePage</td><td>Hero, teaser, featured projects, skills, testimonials, CTA</td><td>No</td></tr>
+      <tr><td><code>/about</code></td><td>AboutPage</td><td>Bio, story, value props, skills, CTA</td><td>No</td></tr>
+      <tr><td><code>/projects</code></td><td>ProjectsPage</td><td>Filterable grid of all project cards</td><td>No</td></tr>
+      <tr><td><code>/projects/:slug</code></td><td>CaseStudyPage</td><td>Full case study layout, pulls data by slug</td><td>Yes</td></tr>
+      <tr><td><code>/blog</code></td><td>BlogPage</td><td>Article listing grid with filter</td><td>No</td></tr>
+      <tr><td><code>/blog/:slug</code></td><td>BlogPostPage</td><td>Full article reading layout</td><td>Yes</td></tr>
+      <tr><td><code>/contact</code></td><td>ContactPage</td><td>Split layout: info + contact form</td><td>No</td></tr>
+      <tr><td><code>/cv</code></td><td>CVPage</td><td>PDF viewer + download button</td><td>No</td></tr>
+    </tbody>
+  </table>
+
+  <div class="spec-block">
+    <h4>DATA ARCHITECTURE</h4>
+    <ul>
+      <li>Store all project data in <code>/src/data/projects.ts</code> — an array of project objects. Each object: <code>{ slug, title, brand, category, tags[], summary, overview, challenge, role, strategy, execution, results[], learnings[], assets[], landingPageLinks[], tools[] }</code></li>
+      <li>Store blog posts in <code>/src/data/posts.ts</code> — array of post objects: <code>{ slug, title, category, date, excerpt, body }</code></li>
+      <li>The <code>CaseStudyPage</code> component finds its project by matching <code>params.slug</code> to the data array. If no match, redirect to <code>/projects</code>.</li>
+      <li>This architecture means adding new projects requires only adding an entry to the data file — no new pages needed.</li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════════════════════
+     SECTION 12: CONTENT & LINKS
+════════════════════════════════════════════════════════ -->
+<section class="section" id="data">
+  <p class="section-label">12 · REAL CONTENT</p>
+  <h2 class="section-title">Real Content, Links & Assets</h2>
+  <p class="section-sub">All links below are live and functional. They must open in a new tab. Do not use placeholder URLs for these.</p>
+
+  <table>
+    <thead>
+      <tr><th>Item</th><th>Value</th><th>Where Used</th><th>Behaviour</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Email</td>
+        <td><code>sumayyaahbint@gmail.com</code></td>
+        <td>Contact page, footer, nav CV button tooltip</td>
+        <td><code>mailto:</code> link</td>
+      </tr>
+      <tr>
+        <td>LinkedIn</td>
+        <td><code>https://www.linkedin.com/in/SumayyaahBintYahya</code></td>
+        <td>Contact page, footer</td>
+        <td>Opens new tab</td>
+      </tr>
+      <tr>
+        <td>OatLabs Landing Page A</td>
+        <td><code>https://69eb1c6c5f96d1fbc02477f1--magnificent-fairy-08162e.netlify.app/</code></td>
+        <td>OatLabs case study — Section 05c</td>
+        <td>Opens new tab, styled as preview card with label "Landing Page Prototype A — Visit Live →"</td>
+      </tr>
+      <tr>
+        <td>OatLabs Landing Page B</td>
+        <td><code>https://69eaae16b565e6c27894a34a--magnificent-fairy-08162e.netlify.app/</code></td>
+        <td>OatLabs case study — Section 05c</td>
+        <td>Opens new tab, styled as preview card with label "Landing Page Prototype B — Visit Live →"</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="spec-block" style="margin-top:16px;">
+    <h4>NAMING & IDENTITY</h4>
+    <ul>
+      <li>Full name: <strong>Sumayyaah Bint Yahya</strong> — used in the hero, about page, footer, and CV page</li>
+      <li>Short monogram: <strong>SBY</strong> — used as the nav logo and footer brand mark. Playfair Display, <code>--accent</code> colour.</li>
+      <li>Tagline: <strong>"I don't just market products. I decide what they become."</strong></li>
+      <li>Sub-tagline (used in smaller contexts): <strong>"Marketing that makes or mars."</strong></li>
+      <li>Professional title: <strong>Sales & Marketing Professional · Product-Led Marketing</strong></li>
+    </ul>
+  </div>
+
+  <div class="instruction-box" style="margin-top:24px;">
+    <h4>⚡ LOVABLE BUILD INSTRUCTIONS — READ FIRST</h4>
+    <ul>
+      <li>This HTML file is the complete design spec. Build exactly what is described here — do not substitute defaults or generic templates.</li>
+      <li>Use <strong>React + React Router v6</strong> for multi-page routing. This is not a single-page scroll site.</li>
+      <li>Use <strong>Framer Motion</strong> for all animations as specified above.</li>
+      <li>Use <strong>Tailwind CSS</strong> or pure CSS with the design tokens defined in Section 01. No third-party UI component libraries (no shadcn, no chakra) — custom styled components only.</li>
+      <li>Load fonts from Google Fonts: <code>Playfair Display</code> (weights 600, 700), <code>Inter</code> (weights 400, 500), <code>Space Grotesk</code> (weights 400, 500).</li>
+      <li>All links specified in Section 12 must be live, functional, and open in new tabs where specified.</li>
+      <li>All placeholder content must be on-brand (marketing/strategy themed) — no Lorem Ipsum anywhere.</li>
+      <li>The site must be fully responsive: tested at 375px (mobile), 768px (tablet), 1280px (desktop), and 1440px (wide).</li>
+      <li>Upload the ad creative images (Ad_creative_1.png, Ad_creative_2.png, Ad_creative_3.png, Coffee_Boost__OatLabs.png, Spice_Cabinet__OatLabs.png, Spiced_Ginger__OatLabs_.png, Recipe_card.png, OatLabs.png) to the asset manager and reference them in the OatLabs case study gallery.</li>
+      <li>Project data must live in a <code>/src/data/projects.ts</code> file so future projects can be added without touching component code.</li>
+      <li>Add a <code>&lt;meta name="description"&gt;</code> and correct <code>&lt;title&gt;</code> tag to each page for basic SEO.</li>
+    </ul>
+  </div>
+</section>
+
+<div style="padding:40px 64px; border-top:1px solid var(--border); text-align:center;">
+  <p style="font-family:var(--font-mono); font-size:12px; color:var(--muted); letter-spacing:0.1em;">PORTFOLIO BUILD SPEC · SUMAYYAAH BINT YAHYA · JUNE 2026</p>
+  <p style="font-family:var(--font-display); font-size:1.1rem; color:var(--accent); margin-top:8px; font-style:italic;">Build it like it matters. Because it does.</p>
+</div>
+
+</body>
+</html>
