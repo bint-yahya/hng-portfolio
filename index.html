@@ -11,7 +11,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet">
 
   <style>
-    /* DESIGN TOKENS (WCAG 2.1 AA Compliant) */
+    /* DESIGN TOKENS */
     :root {
       --bg: #09090E;
       --surface: #111118;
@@ -48,7 +48,7 @@
       font-size: 16px;
       line-height: 1.7;
       transition: background-color 0.3s ease, color 0.3s ease;
-      cursor: none; /* Custom cursor */
+      cursor: none;
       overflow-x: hidden;
     }
 
@@ -63,19 +63,13 @@
 
     /* CUSTOM CURSOR */
     .custom-cursor {
-      position: fixed; top: 0; left: 0;
-      width: 8px; height: 8px;
-      background-color: var(--accent);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 9999;
-      transform: translate(-50%, -50%);
+      position: fixed; top: 0; left: 0; width: 8px; height: 8px;
+      background-color: var(--accent); border-radius: 50%;
+      pointer-events: none; z-index: 9999; transform: translate(-50%, -50%);
       transition: width 0.2s, height 0.2s, background-color 0.2s, border 0.2s;
     }
     .custom-cursor.hover {
-      width: 28px; height: 28px;
-      background-color: transparent;
-      border: 2px solid var(--accent);
+      width: 28px; height: 28px; background-color: transparent; border: 2px solid var(--accent);
     }
     @media (max-width: 1024px) { .custom-cursor { display: none; } }
 
@@ -167,4 +161,534 @@
     /* FORMS */
     .form-group { margin-bottom: 24px; }
     .form-label { display: block; font-family: var(--font-m); font-size: 12px; margin-bottom: 8px; color: var(--muted); }
-    .form-control { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); font-family: var(--font-b); font-size: 16px; padding: 14px; border-radius
+    .form-control { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); font-family: var(--font-b); font-size: 16px; padding: 14px; border-radius: 8px; transition: border 0.2s; }
+    .form-control:focus { border-color: var(--accent); outline: none; }
+    textarea.form-control { min-height: 120px; resize: vertical; }
+
+    /* ANIMATIONS - Fixed fallback state */
+    .reveal { opacity: 1; transform: translateY(0); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+    .js-active .reveal { opacity: 0; transform: translateY(20px); }
+    .reveal.is-visible { opacity: 1 !important; transform: translateY(0) !important; }
+    .delay-1 { transition-delay: 0.1s; } .delay-2 { transition-delay: 0.2s; } .delay-3 { transition-delay: 0.3s; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, ::before, ::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+      .reveal { opacity: 1; transform: none; }
+      .js-active .reveal { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="custom-cursor" id="cursor"></div>
+
+  <header id="header">
+    <div class="nav-container">
+      <a href="#/" class="logo" aria-label="Bint — Sumayyaah Bint Yahya portfolio, return to homepage"><span>B</span>int</a>
+      <button class="mobile-menu-btn" id="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
+      <nav class="nav-links" id="nav-links">
+        <button class="theme-toggle" id="theme-toggle" role="switch" aria-checked="false" aria-label="Switch to light mode">🌙</button>
+        <a href="#/">Home</a>
+        <a href="#/about">About</a>
+        <a href="#/projects">Projects</a>
+        <a href="#/blog">Blog</a>
+        <a href="#/contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="app-root"></main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="logo"><span>B</span>int</div>
+          <p class="footer-tagline">I don't just market products. I decide what they become.</p>
+        </div>
+        <div style="display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; font-family: var(--font-m); font-size: 13px;">
+          <a href="#/">Home</a>
+          <a href="#/about">About</a>
+          <a href="#/projects">Projects</a>
+          <a href="#/blog">Blog</a>
+          <a href="#/contact">Contact</a>
+        </div>
+        <div style="text-align: right; font-family: var(--font-m); font-size: 13px;">
+          <a href="https://www.linkedin.com/in/SumayyaahBintYahya" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn profile" style="display: block; margin-bottom: 8px;">LinkedIn ↗</a>
+          <a href="mailto:sumayyaahbint@gmail.com" aria-label="Send email to Sumayyaah">sumayyaahbint@gmail.com</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        © 2026 Sumayyaah Bint Yahya. Built with intent.
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Enable JS-dependent animations
+    document.body.classList.add('js-active');
+
+    /* --- DATA STORE --- */
+    const data = {
+      projects: {
+        'oatlabs-boring-product-campaign': {
+          title: "The Boring Product Campaign", brand: "OatLabs", category: "Brand Strategy",
+          bg: "linear-gradient(135deg, #1a0f08, #1a1020)",
+          summary: "Turned oats into a compelling DTC brand with full funnel, 4 ad copies, 3 growth hacks, and a $0→$10K revenue roadmap.",
+          html: `
+            <div class="cs-header">
+              <div class="container">
+                <a href="#/projects" style="font-family: var(--font-m); font-size: 12px; color: var(--muted); margin-bottom: 24px; display: inline-block;">← All Projects</a>
+                <br><span class="tag tag-accent" style="margin-bottom: 16px;">BRAND STRATEGY</span>
+                <h1 style="font-size: 2.5rem; margin: 16px 0;">The Boring Product Campaign</h1>
+                <p style="color: var(--muted);">OatLabs · April 2026 · Stage 2, Marketing Fellowship</p>
+              </div>
+            </div>
+            <div class="cs-content">
+              <h4>01 · The Brief</h4>
+              <p>Stage 2 of the HNG Marketing Fellowship: select a low-interest, everyday product and build a complete strategy to grow it from $0 to $10K revenue. The task tested the ability to apply core marketing principles to drive growth from scratch. I chose oats — not despite the fact that they're boring, but because of it.</p>
+              
+              <h4>02 · My Role & Responsibilities</h4>
+              <ul>
+                <li><strong>Title:</strong> Brand Strategist & Campaign Designer</li>
+                <li>Sole creator — all strategy, copy, and creative direction was developed independently</li>
+                <li><strong>Responsibilities:</strong> Brand naming and concept (OatLabs — The Morning Formula™), Customer personas, Full-funnel strategy, Ad copywriting, Email sequence design, Growth hacks, Landing page prototypes, Revenue roadmap.</li>
+              </ul>
+              
+              <h4>03 · Strategy & Approach</h4>
+              <p>Oats have a retention problem. Consumers buy once, get bored, and never come back. The "boring" label became the brand's superpower — because the most powerful brand position is one your competitors are too proud to claim.</p>
+              <p><strong>Repositioning:</strong> Oats are not a meal — they're a base. OatLabs introduced a modular morning ritual system: Base + Lab + Ritual. Tagline: <em>"Your daily formula. Your flavour rules."</em></p>
+              
+              <h4>04 · Execution & Deliverables</h4>
+              <ul>
+                <li>4 Ad Copies written targeting different segments (oat drop-outs, fitness crowd, busy students).</li>
+                <li>3-email sequence designed (Welcome → Nurture → Conversion with urgency).</li>
+                <li>3 Growth hacks created including the 'Formula Drop Model' and 'Creator Kitchen'.</li>
+                <li>90-day revenue roadmap mapped out in 3 distinct phases.</li>
+              </ul>
+
+              <div style="margin-top: 48px; display: grid; gap: 16px; grid-template-columns: 1fr 1fr;">
+                <a href="https://69eb1c6c5f96d1fbc02477f1--magnificent-fairy-08162e.netlify.app/" target="_blank" class="card" style="text-align: center; padding: 24px;">
+                  <span class="eyebrow">Prototype A</span>
+                  <p style="font-weight: 500;">Visit Live Page ↗</p>
+                </a>
+                <a href="https://69eaae16b565e6c27894a34a--magnificent-fairy-08162e.netlify.app/" target="_blank" class="card" style="text-align: center; padding: 24px;">
+                  <span class="eyebrow">Prototype B</span>
+                  <p style="font-weight: 500;">Visit Live Page ↗</p>
+                </a>
+              </div>
+            </div>`
+        },
+        'menucard-comprehensive-strategy': {
+          title: "Comprehensive Marketing Strategy", brand: "MenuCard", category: "Comprehensive Strategy",
+          bg: "linear-gradient(135deg, #0f1a10, #0a0f1a)",
+          summary: "A data-driven, multi-channel marketing strategy for a B2B SaaS restaurant product covering SEO, ads, social, and email.",
+          html: `
+            <div class="cs-header">
+              <div class="container">
+                <a href="#/projects" style="font-family: var(--font-m); font-size: 12px; color: var(--muted); margin-bottom: 24px; display: inline-block;">← All Projects</a>
+                <br><span class="tag tag-accent" style="margin-bottom: 16px;">COMPREHENSIVE STRATEGY</span>
+                <h1 style="font-size: 2.5rem; margin: 16px 0;">MenuCard: Comprehensive Marketing Strategy</h1>
+                <p style="color: var(--muted);">MenuCard · Stage 3, Marketing Fellowship</p>
+              </div>
+            </div>
+            <div class="cs-content">
+              <h4>01 · The Brief</h4>
+              <p>Build a full-scale, multi-channel marketing strategy grounded in real product understanding. MenuCard is a B2B SaaS product positioned as the operating system restaurants didn't know they needed (QR menus, live sync, order management). Nigerian restaurants aren't losing money to bad menus — they're losing it to operational chaos.</p>
+              
+              <h4>02 · Strategy & Approach</h4>
+              <p><strong>The dual-audience insight:</strong> MenuCard is B2B (owners buy it) with a B2C surface (diners use it). Content targeting owners builds pipeline; content targeting diners builds cultural pressure. Both exist on social media.</p>
+              <p><strong>SEO insight:</strong> Strategy focused on owning problem keywords ("How to manage restaurant orders faster") rather than product keywords ("digital menu app"), securing first-mover advantage in an emerging market.</p>
+            </div>`
+        },
+        'menucard-founder-led-strategy': {
+          title: "Founder-Led Marketing Strategy", brand: "MenuCard", category: "Founder Marketing",
+          bg: "linear-gradient(135deg, #1a0f14, #101a14)",
+          summary: "A founder-first marketing system for Michael Abu—positioning, narrative, content calendar, and a relational conversion strategy.",
+          html: `
+            <div class="cs-header">
+              <div class="container">
+                <a href="#/projects" style="font-family: var(--font-m); font-size: 12px; color: var(--muted); margin-bottom: 24px; display: inline-block;">← All Projects</a>
+                <br><span class="tag tag-violet" style="margin-bottom: 16px;">⭐ SCORED 10.5 / 10</span>
+                <h1 style="font-size: 2.5rem; margin: 16px 0;">Founder-Led Marketing Strategy</h1>
+                <p style="color: var(--muted);">MenuCard · Stage 4B, Marketing Fellowship</p>
+              </div>
+            </div>
+            <div class="cs-content">
+              <div style="background: rgba(167,139,250,0.1); border: 1px solid var(--violet); padding: 16px; border-radius: 8px; margin-bottom: 32px;">
+                <p style="color: var(--text); font-family: var(--font-m); font-size: 13px;"><strong>Outstanding Achievement:</strong> Brand owner and mentors cited this as the strongest submission in the cohort.</p>
+              </div>
+              <h4>01 · The Brief</h4>
+              <p>Position the founder (Michael Abu) as a compelling personal brand, build visibility across three platforms, drive meaningful engagement, and convert followers into early users — using the founder's voice instead of brand ads.</p>
+              <h4>02 · Strategy & Approach</h4>
+              <p><strong>Founder narrative:</strong> "I stopped waiting for someone else to fix what was broken and started building the things I wished existed." Michael's architecture background was leveraged as the perfect metaphor for designing functional restaurant systems.</p>
+              <ul>
+                <li>4 distinct audience segments identified.</li>
+                <li>5 core content pillars developed (The Builder's Mind, The Frustrated User, Building in Public, Life of a Polymath, The African Builder Context).</li>
+                <li>4-week multi-platform calendar executing across LinkedIn, Instagram, and X without generic cross-posting.</li>
+              </ul>
+            </div>`
+        },
+        'resolve-website-strategy': {
+          title: "Website Strategy & IA", brand: "Resolve", category: "Web Strategy",
+          bg: "linear-gradient(135deg, #0f1020, #1a1020)",
+          summary: "Full website strategy for an online voting platform — IA, SEO, CRO, WCAG compliance. Live site deployed.",
+          html: `
+            <div class="cs-header">
+              <div class="container">
+                <a href="#/projects" style="font-family: var(--font-m); font-size: 12px; color: var(--muted); margin-bottom: 24px; display: inline-block;">← All Projects</a>
+                <br><span class="tag tag-accent" style="margin-bottom: 16px;">WEB STRATEGY & UX</span>
+                <h1 style="font-size: 2.5rem; margin: 16px 0;">Resolve: Website Strategy & IA</h1>
+                <p style="color: var(--muted);">Resolve · Live Deployed Project</p>
+              </div>
+            </div>
+            <div class="cs-content">
+              <h4>01 · The Brief</h4>
+              <p>Build a website strategy and information architecture for Resolve — an online voting platform helping organizations conduct secure, transparent, and accessible elections.</p>
+              
+              <h4>02 · Strategy & Approach</h4>
+              <p><strong>The trust-first insight:</strong> Resolve sells trust before it sells software. The website consistently leads with the user's problem before introducing the product to reduce perceived risk.</p>
+              <p><strong>WCAG 2.1 AA Compliance:</strong> The platform promoting accessible voting must itself be accessible. A full compliance checklist was developed and implemented covering contrast, focus states, and semantics.</p>
+
+              <div style="margin-top: 48px; text-align: center;">
+                <a href="https://resolve-vote.lovable.app" target="_blank" class="card" style="display: inline-block; padding: 32px 64px;">
+                  <span class="eyebrow">Live Build</span>
+                  <p style="font-weight: 500; font-size: 18px; color: var(--accent);">Visit Live Website ↗</p>
+                </a>
+              </div>
+            </div>`
+        }
+      }
+    };
+
+    /* --- PAGE TEMPLATES --- */
+    const pages = {
+      home: () => `
+        <section class="hero container">
+          <div class="hero-glow"></div>
+          <div style="max-width: 800px; z-index: 1;">
+            <span class="eyebrow reveal">Sales & Marketing · Product-Led Growth · Brand Strategy</span>
+            <h1 class="reveal delay-1">I don't just market products.<br><em>I decide what they become.</em></h1>
+            <p class="sub reveal delay-2">Sumayyaah Bint Yahya · Marketing that makes or mars.</p>
+            <div class="cta-row reveal delay-3">
+              <a href="#/projects" class="btn btn-primary">See My Work →</a>
+              <a href="#/contact" class="btn btn-ghost">Download CV</a>
+            </div>
+          </div>
+        </section>
+
+        <section class="section container">
+          <div class="grid-2">
+            <div class="reveal">
+              <span class="eyebrow">About Me</span>
+              <p style="font-size: 18px; margin-bottom: 24px;">I'm a Sales & Marketing professional who leans toward product-led marketing — the kind where the product is the proof and the strategy is the story. I've spent time building campaigns, developing brands from briefs, crafting copy that converts, and thinking about the gap between what a product is and what it could mean to the right person.</p>
+              <a href="#/about" style="color: var(--accent); font-family: var(--font-m); font-size: 13px; font-weight: 500;">More about me →</a>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;" class="reveal delay-1">
+              <div class="card stat-card"><div class="num">7+</div><div class="lbl">Projects Completed</div></div>
+              <div class="card stat-card"><div class="num">3</div><div class="lbl">Specialisations</div></div>
+              <div class="card stat-card" style="grid-column: span 2;"><div class="num">1</div><div class="lbl">Core Philosophy: Make it matter.</div></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="section container">
+          <span class="eyebrow reveal">Selected Work</span>
+          <h2 class="section-title reveal">A sample of strategy & copy.</h2>
+          <p class="section-sub reveal">Built from real briefs during a competitive marketing fellowship.</p>
+          <div class="grid-3">
+            ${Object.entries(data.projects).slice(0,3).map(([slug, p], i) => `
+              <a href="#/projects/${slug}" class="card project-card reveal delay-${i+1}">
+                <div class="project-thumb" style="background: ${p.bg}">
+                  <span class="watermark">${p.brand}</span>
+                </div>
+                <div class="project-body">
+                  <span class="tag tag-accent" style="align-self: flex-start;">${p.category}</span>
+                  <h3>${p.title}</h3>
+                  <p>${p.summary}</p>
+                  <span class="project-link">View Case Study →</span>
+                </div>
+              </a>
+            `).join('')}
+          </div>
+          <div style="text-align: center; margin-top: 48px;" class="reveal">
+            <a href="#/projects" class="btn btn-ghost">View All Projects →</a>
+          </div>
+        </section>
+
+        <section class="section container">
+          <span class="eyebrow reveal">Toolkit</span>
+          <h2 class="section-title reveal">What I Work With</h2>
+          <div class="skills-grid reveal delay-1" style="margin-top: 32px;">
+            <div class="skill-chip">✍️ Copywriting</div>
+            <div class="skill-chip">📧 Email Marketing</div>
+            <div class="skill-chip">🔍 SEO</div>
+            <div class="skill-chip">🎯 Funnel Strategy</div>
+            <div class="skill-chip">📣 Brand Positioning</div>
+            <div class="skill-chip">📈 Growth Hacking</div>
+            <div class="skill-chip">📊 Market Research</div>
+          </div>
+        </section>
+      `,
+
+      about: () => `
+        <section class="section container" style="padding-top: 140px;">
+          <span class="eyebrow reveal">The Story</span>
+          <h1 class="section-title reveal">Marketing that makes or mars.</h1>
+          <div class="grid-2 reveal delay-1" style="margin-top: 48px;">
+            <div>
+              <p style="margin-bottom: 24px;">I'm Sumayyaah Bint Yahya — a Sales & Marketing professional who leans toward product-led marketing. I believe the most powerful campaigns aren't the loudest ones. They're the ones that understand what a product is really offering, who it's really for, and what story makes those two things click.</p>
+              <p style="margin-bottom: 24px;">What draws me to this work is a conviction I hold tightly: as a marketer, I can make or mar a product. That weight is what makes it interesting. I've spent time building brand strategies, writing ad copy that converts, designing email flows, and developing growth systems — across products as different as oats and fintech.</p>
+              <p>I'm currently looking for roles where strategy is taken seriously and execution is celebrated. If you're building something that needs to be understood, positioned, and loved by the right people — let's talk.</p>
+            </div>
+            <div>
+              <div class="card" style="background: rgba(212,136,74,0.05); border-color: var(--accent);">
+                <h3 style="font-size: 1.5rem; font-style: italic; margin-bottom: 16px;">"A marketer can make or mar a product. That weight is what makes this work interesting."</h3>
+              </div>
+            </div>
+          </div>
+        </section>
+        
+        <section class="section container">
+          <span class="eyebrow reveal">Approach</span>
+          <div class="grid-2 reveal delay-1">
+            <div class="card">
+              <h3 style="margin-bottom: 12px;">🎯 Strategy First</h3>
+              <p class="section-sub" style="margin: 0;">I build from insight, not instinct. Every campaign starts with a clear understanding of the product, the audience, and the gap between them.</p>
+            </div>
+            <div class="card">
+              <h3 style="margin-bottom: 12px;">✍️ Copy That Converts</h3>
+              <p class="section-sub" style="margin: 0;">Words are not decoration. I write ad copy, email flows, and landing pages that move people from curious to convinced.</p>
+            </div>
+            <div class="card">
+              <h3 style="margin-bottom: 12px;">👁️ Audience Obsession</h3>
+              <p class="section-sub" style="margin: 0;">Personas aren't a slide to fill. I build them from real behavioural insight and use them to pressure-test decisions.</p>
+            </div>
+            <div class="card">
+              <h3 style="margin-bottom: 12px;">⚙️ Systems Thinker</h3>
+              <p class="section-sub" style="margin: 0;">Marketing is a system, not a series of moments. I think in funnels, email sequences, and growth loops.</p>
+            </div>
+          </div>
+        </section>
+      `,
+
+      projects: () => `
+        <section class="section container" style="padding-top: 140px;">
+          <h1 class="section-title reveal">Selected Work</h1>
+          <p class="section-sub reveal">Five projects. Real briefs. Real strategy. Delivered during a competitive marketing fellowship.</p>
+          
+          <div class="grid-3 reveal delay-1" style="margin-top: 48px;">
+            ${Object.entries(data.projects).map(([slug, p]) => `
+              <a href="#/projects/${slug}" class="card project-card">
+                <div class="project-thumb" style="background: ${p.bg}">
+                  <span class="watermark">${p.brand}</span>
+                </div>
+                <div class="project-body">
+                  <span class="tag tag-accent" style="align-self: flex-start; margin-bottom: 12px;">${p.category}</span>
+                  <h3>${p.title}</h3>
+                  <p>${p.summary}</p>
+                  <span class="project-link">View Case Study →</span>
+                </div>
+              </a>
+            `).join('')}
+            <div class="card project-card" style="opacity: 0.6; cursor: default;">
+                <div class="project-thumb" style="background: var(--surface2)">
+                  <span class="watermark">Coming Soon</span>
+                </div>
+                <div class="project-body">
+                  <span class="tag tag-violet" style="align-self: flex-start; margin-bottom: 12px;">IN PROGRESS</span>
+                  <h3>Project 5</h3>
+                  <p>Awaiting final brief execution and upload.</p>
+                </div>
+              </div>
+          </div>
+        </section>
+      `,
+
+      blog: () => `
+        <section class="section container" style="padding-top: 140px; min-height: 70vh;">
+          <span class="eyebrow reveal">Insights</span>
+          <h1 class="section-title reveal">Marketing thinking.<br>Written down.</h1>
+          <p class="section-sub reveal delay-1">Full articles and essays coming soon.</p>
+          <div class="grid-3 reveal delay-2" style="margin-top: 48px;">
+             <div class="card">
+                <span class="tag tag-accent" style="margin-bottom: 12px;">BRANDING</span>
+                <h3 style="margin: 12px 0;">Why Boring Products Make the Best Brands</h3>
+                <p class="section-sub" style="margin-bottom: 16px;">When the category is dull, differentiation becomes incredibly easy.</p>
+                <span style="color: var(--muted); font-family: var(--font-m); font-size: 12px;">Coming Soon</span>
+             </div>
+             <div class="card">
+                <span class="tag tag-accent" style="margin-bottom: 12px;">STRATEGY</span>
+                <h3 style="margin: 12px 0;">The Retention Problem: What Oats Taught Me</h3>
+                <p class="section-sub" style="margin-bottom: 16px;">A deep dive into why high-volume categories suffer from low repeat purchases.</p>
+                <span style="color: var(--muted); font-family: var(--font-m); font-size: 12px;">Coming Soon</span>
+             </div>
+          </div>
+        </section>
+      `,
+
+      contact: () => `
+        <section class="section container" style="padding-top: 140px;">
+          <div class="grid-2">
+            <div class="reveal">
+              <h1 class="section-title">Let's Talk.</h1>
+              <p class="section-sub">Whether it's a role, a project, or a conversation about marketing — my inbox is open.</p>
+              
+              <div style="margin-top: 48px;">
+                <span class="eyebrow">Email</span>
+                <a href="mailto:sumayyaahbint@gmail.com" style="font-size: 20px; display: inline-block; margin-bottom: 24px;">sumayyaahbint@gmail.com</a>
+                
+                <span class="eyebrow">Social</span>
+                <a href="https://www.linkedin.com/in/SumayyaahBintYahya" target="_blank" rel="noopener noreferrer" style="font-size: 20px; display: inline-block; margin-bottom: 48px;">LinkedIn ↗</a>
+                
+                <br>
+                <button class="btn btn-primary" onclick="alert('CV PDF will be available shortly.')">Download CV</button>
+              </div>
+            </div>
+            
+            <div class="card reveal delay-1">
+              <form action="https://formspree.io/f/YOUR_FORMSPREE_ID" method="POST">
+                <div class="form-group">
+                  <label class="form-label" for="name">FULL NAME *</label>
+                  <input type="text" id="name" name="name" class="form-control" required placeholder="Your name">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="email">EMAIL ADDRESS *</label>
+                  <input type="email" id="email" name="email" class="form-control" required placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="subject">SUBJECT</label>
+                  <select id="subject" name="subject" class="form-control">
+                    <option>Job Opportunity</option>
+                    <option>Project Collaboration</option>
+                    <option>Freelance Work</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="message">MESSAGE *</label>
+                  <textarea id="message" name="message" class="form-control" required placeholder="What's on your mind?"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Send Message →</button>
+              </form>
+            </div>
+          </div>
+        </section>
+      `
+    };
+
+    /* --- ROUTER & LOGIC --- */
+    const app = document.getElementById('app-root');
+    const navLinks = document.getElementById('nav-links');
+    const mobileMenuBtn = document.getElementById('mobile-menu-toggle');
+    const header = document.getElementById('header');
+
+    function router() {
+      const hash = window.location.hash || '#/';
+      window.scrollTo(0, 0);
+      navLinks.classList.remove('open');
+      mobileMenuBtn.innerHTML = '☰';
+
+      // Active state in nav
+      document.querySelectorAll('.nav-links a').forEach(a => {
+        a.classList.remove('active');
+        if (a.getAttribute('href') === hash || (hash.startsWith('#/projects') && a.getAttribute('href') === '#/projects')) {
+          a.classList.add('active');
+        }
+      });
+
+      // Render View
+      if (hash === '#/') app.innerHTML = pages.home();
+      else if (hash === '#/about') app.innerHTML = pages.about();
+      else if (hash === '#/projects') app.innerHTML = pages.projects();
+      else if (hash.startsWith('#/projects/')) {
+        const slug = hash.replace('#/projects/', '');
+        app.innerHTML = data.projects[slug] ? data.projects[slug].html : '<div class="container section" style="padding-top:140px; text-align:center;"><h1>Project Not Found</h1><a href="#/projects" class="btn btn-primary" style="margin-top:24px;">Back to Projects</a></div>';
+      }
+      else if (hash === '#/blog') app.innerHTML = pages.blog();
+      else if (hash === '#/contact') app.innerHTML = pages.contact();
+      else app.innerHTML = pages.home();
+
+      initAnimations();
+    }
+
+    /* --- MOBILE MENU --- */
+    mobileMenuBtn.addEventListener('click', () => {
+      navLinks.classList.toggle('open');
+      mobileMenuBtn.innerHTML = navLinks.classList.contains('open') ? '✕' : '☰';
+    });
+
+    /* --- SCROLL NAV --- */
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 60) header.classList.add('scrolled');
+      else header.classList.remove('scrolled');
+    });
+
+    /* --- THEME TOGGLE --- */
+    const themeBtn = document.getElementById('theme-toggle');
+    const htmlObj = document.documentElement;
+    
+    // Load preference
+    if (localStorage.getItem('theme') === 'light') {
+      htmlObj.setAttribute('data-theme', 'light');
+      themeBtn.innerHTML = '☀️';
+      themeBtn.setAttribute('aria-checked', 'true');
+      themeBtn.setAttribute('aria-label', 'Switch to dark mode');
+    }
+
+    themeBtn.addEventListener('click', () => {
+      const current = htmlObj.getAttribute('data-theme');
+      if (current === 'dark') {
+        htmlObj.setAttribute('data-theme', 'light');
+        localStorage.setItem('theme', 'light');
+        themeBtn.innerHTML = '☀️';
+        themeBtn.setAttribute('aria-checked', 'true');
+        themeBtn.setAttribute('aria-label', 'Switch to dark mode');
+      } else {
+        htmlObj.setAttribute('data-theme', 'dark');
+        localStorage.setItem('theme', 'dark');
+        themeBtn.innerHTML = '🌙';
+        themeBtn.setAttribute('aria-checked', 'false');
+        themeBtn.setAttribute('aria-label', 'Switch to light mode');
+      }
+    });
+
+    /* --- CUSTOM CURSOR --- */
+    const cursor = document.getElementById('cursor');
+    document.addEventListener('mousemove', (e) => {
+      cursor.style.left = e.clientX + 'px';
+      cursor.style.top = e.clientY + 'px';
+    });
+    document.addEventListener('mouseover', (e) => {
+      if (e.target.tagName === 'A' || e.target.tagName === 'BUTTON' || e.target.closest('a') || e.target.closest('button')) {
+        cursor.classList.add('hover');
+      } else {
+        cursor.classList.remove('hover');
+      }
+    });
+
+    /* --- INTERSECTION OBSERVER (ANIMATIONS) --- */
+    function initAnimations() {
+      const reveals = document.querySelectorAll('.reveal');
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+      
+      reveals.forEach(el => observer.observe(el));
+    }
+
+    /* --- INITIALIZE APP --- */
+    window.addEventListener('hashchange', router);
+    document.addEventListener('DOMContentLoaded', router);
+    
+    // Fallback: If DOM is already loaded by the time script runs (e.g. fast rendering)
+    if (document.readyState === "complete" || document.readyState === "interactive") {
+        setTimeout(router, 1);
+    }
+  </script>
+</body>
+</html>
